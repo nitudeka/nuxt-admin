@@ -1,8 +1,22 @@
 const express = require("express");
 const consola = require("consola");
+const multer = require("multer");
+const path = require("path");
 const { Nuxt, Builder } = require("nuxt");
 const bodyParser = require("body-parser");
 const app = express();
+
+// Initialize multer
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, "./public/uploads/"),
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+const upload = multer({ storage: storage }).single("image");
 
 // Import and Set Nuxt.js options
 const config = require("../nuxt.config.js");
@@ -25,10 +39,12 @@ async function start() {
     await nuxt.ready();
   }
 
+  const dir = path.join(__dirname, "public");
+  app.use(express.static(dir));
   app.use(bodyParser.json());
 
   // admin routes
-  app.use("/api/admin", adminRoutes);
+  app.use("/api/admin", upload, adminRoutes);
 
   // Give nuxt middleware to express
   app.use(nuxt.render);

@@ -1,16 +1,18 @@
 <template>
   <div class="container mt-5">
     <div>
-      <div class="mb-5">
+      <div>
         <!-- <label for="description">Post description</label> -->
         <textarea
+          v-model="description"
           placeholder="Post description"
           class="form-control shadow-lg"
           id="description"
           rows="3"
         ></textarea>
       </div>
-      <div id="editorjs" class="rounded shadow-lg"></div>
+      <div id="editorjs" class="rounded my-4 shadow-lg"></div>
+      <button @click="save" type="button" class="btn btn-primary">Save</button>
     </div>
   </div>
 </template>
@@ -28,6 +30,11 @@ if (process.browser) {
 export default {
   layout: "admin",
   middleware: "adminauth",
+  data() {
+    return {
+      description: ""
+    };
+  },
   mounted() {
     this.editor = new EditorJS({
       holder: "editorjs",
@@ -38,7 +45,7 @@ export default {
           class: Image,
           config: {
             endpoints: {
-              byFile: process.env.baseUrl + "/api/admin/post/img"
+              byFile: process.env.API_URL + "/post/img"
             }
           }
         }
@@ -49,7 +56,6 @@ export default {
     save() {
       this.editor.save().then(async outputData => {
         if (outputData.blocks.length) {
-          console.log(outputData.blocks);
           let heading;
           for (let i = 0; i < outputData.blocks.length; i++) {
             if (outputData.blocks[i].type === "header") {
@@ -69,5 +75,9 @@ export default {
 <style lang='scss' scoped>
 .form-control {
   border: none;
+}
+
+.btn-outline-primary {
+  border: 2px solid #007bff;
 }
 </style>
