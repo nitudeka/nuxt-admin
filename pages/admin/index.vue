@@ -56,15 +56,25 @@ export default {
     save() {
       this.editor.save().then(async outputData => {
         if (outputData.blocks.length) {
-          let heading;
+          let heading, featuredImg;
           for (let i = 0; i < outputData.blocks.length; i++) {
             if (outputData.blocks[i].type === "header") {
               heading = outputData.blocks[i].data.text;
-              break;
             }
+            if (outputData.blocks[i].type === "image") {
+              featuredImg = outputData.blocks[i].data.file.url;
+            }
+            if (heading && featuredImg) break;
           }
-        } else {
-          console.log("Nooo");
+          if (heading && featuredImg && this.description) {
+            this.$store.dispatch("savePost", {
+              heading,
+              featuredImg,
+              description: this.description,
+              author: "John Doe",
+              data: outputData.blocks
+            });
+          }
         }
       });
     }

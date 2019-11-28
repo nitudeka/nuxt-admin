@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const { Nuxt, Builder } = require("nuxt");
 const bodyParser = require("body-parser");
+const { initDb } = require("./lib/db");
 const app = express();
 
 // Initialize multer
@@ -52,9 +53,16 @@ async function start() {
   // Listen the server
   app.listen(port, host);
 
-  consola.ready({
-    message: `Server listening on http://${host}:${port}`,
-    badge: true
-  });
+  try {
+    await initDb(process.env.MONGO_URL);
+    consola.success("connected successfully to database");
+    consola.ready({
+      message: `Server listening on http://${host}:${port}`,
+      badge: true
+    });
+  } catch (err) {
+    console.log(err);
+    consola.error("could not connect to database");
+  }
 }
 start();

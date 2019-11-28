@@ -4,19 +4,25 @@ import Cookies from "js-cookie";
 
 export const state = () => ({
   authenticated: false,
+  resErrorMsgs: [],
+  /* pending states */
   signinPending: false,
-  resErrorMsgs: []
+  postCreatePending: false
+  /* pending states */
 });
 
 export const mutations = {
-  set_signin_pending(state) {
-    state.signinPending = !state.signinPending;
-  },
   signin_user(state) {
     state.authenticated = true;
   },
   set_res_error_msg(state, msg) {
     state.resErrorMsgs.push(msg);
+  },
+  set_signin_pending(state) {
+    state.signinPending = !state.signinPending;
+  },
+  set_post_create_pending(state) {
+    state.postCreatePending = !state.postCreatePending;
   }
 };
 
@@ -46,6 +52,16 @@ export const actions = {
     } catch (err) {
       commit("set_res_error_msg", err.response.data.message);
       commit("set_signin_pending");
+    }
+  },
+  async savePost({ commit }, payload) {
+    try {
+      commit("set_post_create_pending");
+      const { data } = await axios.post(process.env.API_URL + "/post", payload);
+      commit("set_post_create_pending");
+    } catch (err) {
+      commit("set_res_error_msg", err.response.data.message);
+      commit("set_post_create_pending");
     }
   }
 };
