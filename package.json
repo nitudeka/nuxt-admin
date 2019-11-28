@@ -12,6 +12,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.15.1",
+    "@editorjs/header": "^2.3.1",
+    "@editorjs/image": "^2.3.3",
+    "@editorjs/list": "^1.4.0",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
